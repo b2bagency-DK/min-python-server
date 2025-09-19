@@ -6,19 +6,22 @@ app = Flask(__name__)
 def home():
     return "Hej fra min online server! 🎉"
 
-# NYT ENDPOINT: /rapport
-# Simpel demo-beregning så vi kan teste, at endpointet virker.
-# (Vi gør det “rigtigt” med baggrundsjob senere.)
-@app.route("/rapport", methods=["GET"])
+# /rapport kan nu modtage data via POST
+@app.route("/rapport", methods=["POST"])
 def rapport():
-    # lille, men synlig beregning
-    total = sum(i * i for i in range(1, 10001))  # 1^2 + 2^2 + ... + 10000^2
+    data = request.get_json() or {}
+
+    # læs tal fra input (eller brug standard hvis ikke angivet)
+    tal = data.get("tal", 10000)
+
+    # lav en beregning baseret på input
+    total = sum(i * i for i in range(1, tal + 1))
+
     return jsonify({
         "status": "ok",
-        "beregning": "sum(i^2) for i=1..10000",
+        "modtaget_tal": tal,
         "resultat": total
     })
 
 if __name__ == "__main__":
-    # Render kører via 'python app.py', så dette er fint til lokal kørsel også.
     app.run(host="0.0.0.0", port=10000)
