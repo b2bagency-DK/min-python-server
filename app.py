@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+from sklearn.cluster import KMeans
+import numpy as np
 
 app = Flask(__name__)
 
@@ -6,11 +8,8 @@ app = Flask(__name__)
 def home():
     return "Hej fra min online server! 🎉"
 
-# NYT ENDPOINT: /rapport
-# Nu tillader vi både GET (browser) og POST (når vi senere sender data)
 @app.route("/rapport", methods=["GET", "POST"])
 def rapport():
-    # Hvis det er et POST-kald med data
     if request.method == "POST":
         data = request.get_json(force=True)
         tal = data.get("tal", [])
@@ -21,7 +20,6 @@ def rapport():
             "resultat": total
         })
     else:
-        # Simpel GET demo-beregning
         total = sum(i * i for i in range(1, 1001))
         return jsonify({
             "status": "ok",
@@ -29,5 +27,5 @@ def rapport():
             "resultat": total
         })
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+# NYT ENDPOINT: /cluster
+@app.route("/cluster", methods=
